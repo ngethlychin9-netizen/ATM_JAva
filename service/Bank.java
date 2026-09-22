@@ -25,4 +25,22 @@ public class Bank {
                     account.getAccountNumber());
         }
     }
+
+    public boolean transfer(
+            String fromAccount,
+            String toAccount,
+            double amount) throws Exception {
+
+        Account sender = accounts.get(fromAccount);
+        Account receiver = accounts.get(toAccount);
+
+        if (sender == null || receiver == null) {
+            return false;
+        }
+
+        sender.withdraw(amount);
+        receiver.deposit(amount);
+
+        return true;
+    }
 }
