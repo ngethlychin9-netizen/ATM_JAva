@@ -41,7 +41,16 @@ public abstract class Account {
     }
 
     public void deposit(double amount) {
+
         balance += amount;
+
+        addTransaction(
+            new Transaction(
+                "Deposit",
+                amount,
+                balance
+            )
+        );
     }
 
     public int getFailedAttempts() {

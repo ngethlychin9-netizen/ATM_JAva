@@ -24,8 +24,13 @@ public class ATM {
             switch (choice) {
 
                 case 1:
-                    System.out.println(
-                            "Login feature coming soon...");
+                    System.out.println("1. Check Balance");
+                    System.out.println("2. Deposit");
+                    System.out.println("3. Withdraw");
+                    System.out.println("4. Transfer");
+                    System.out.println("5. Transaction History");
+                    System.out.println("6. Change PIN");
+                    System.out.println("7. Logout");
                     break;
 
                 case 2:

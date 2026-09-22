@@ -1,6 +1,7 @@
 package model;
 
 import exception.InsufficientFundsException;
+import model.Transaction;
 
 public class SavingsAccount extends Account {
 
@@ -20,5 +21,13 @@ public class SavingsAccount extends Account {
         }
 
         deductBalance(amount);
+
+        addTransaction(
+        new Transaction(
+            "Withdraw",
+            amount,
+            getBalance()
+        )
+    );
     }
 }
