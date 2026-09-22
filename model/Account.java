@@ -44,6 +44,19 @@ public abstract class Account {
         balance += amount;
     }
 
+    public int getFailedAttempts() {
+    return failedAttempts;
+    }
+
+    public void setFailedAttempts(int failedAttempts) {
+        this.failedAttempts = failedAttempts;
+    }
+
+    public void unlockAccount() {
+        locked = false;
+        failedAttempts = 0;
+    }
+
     protected void deductBalance(double amount) {
         balance -= amount;
     }
