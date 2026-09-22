@@ -43,4 +43,8 @@ public class Bank {
 
         return true;
     }
+
+    public HashMap<String, Account> getAccounts() {
+        return accounts;
+    }
 }
