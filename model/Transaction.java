@@ -19,8 +19,25 @@ public class Transaction {
         this.dateTime = LocalDateTime.now();
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public double getBalanceAfter() {
+        return balanceAfter;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
     @Override
     public String toString() {
+
         return type + " | " +
                amount + " | " +
                dateTime + " | " +
