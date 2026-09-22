@@ -1,4 +1,6 @@
 package model;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Account {
 
@@ -7,6 +9,7 @@ public abstract class Account {
     private double balance;
     private boolean locked;
     private int failedAttempts;
+    private List<Transaction> transactions;
 
     public Account(String accountNumber, String pin, double balance) {
         this.accountNumber = accountNumber;
@@ -14,6 +17,7 @@ public abstract class Account {
         this.balance = balance;
         this.locked = false;
         this.failedAttempts = 0;
+        transactions = new ArrayList<>();
     }
 
     public String getAccountNumber() {
@@ -70,5 +74,15 @@ public abstract class Account {
         balance -= amount;
     }
 
+    public void addTransaction(Transaction transaction) {
+        transactions.add(transaction);
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
     public abstract void withdraw(double amount) throws Exception;
+
+
 }

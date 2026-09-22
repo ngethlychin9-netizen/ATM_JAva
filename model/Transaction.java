@@ -10,7 +10,6 @@ public class Transaction {
     private double amount;
     private double balanceAfter;
     private LocalDateTime dateTime;
-    private List<Transaction> transactions;
 
     public Transaction(String type,
                        double amount,
@@ -20,7 +19,6 @@ public class Transaction {
         this.amount = amount;
         this.balanceAfter = balanceAfter;
         this.dateTime = LocalDateTime.now();
-        transactions = new ArrayList<>();
     }
 
     public String getType() {
@@ -37,23 +35,6 @@ public class Transaction {
 
     public LocalDateTime getDateTime() {
         return dateTime;
-    }
-
-    public void addTransaction(Transaction transaction) {
-        transactions.add(transaction);
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    private void showHistory(Account account) {
-
-        for(Transaction transaction :
-                account.getTransactions()) {
-
-            System.out.println(transaction);
-        }
     }
 
     @Override
