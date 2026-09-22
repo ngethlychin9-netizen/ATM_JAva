@@ -1,3 +1,5 @@
+package model;
+
 public class Card {
     private String cardNumber;
     private String pin;
