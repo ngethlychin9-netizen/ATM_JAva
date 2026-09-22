@@ -1,9 +1,5 @@
 package model;
 
-public class CheckingAccount {
-    
-}package model;
-
 import exception.InsufficientFundsException;
 
 public class CheckingAccount extends Account {
