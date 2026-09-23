@@ -32,8 +32,9 @@ public class ATM {
     public ATM() {
         bank = new Bank();
         auth = new AuthenticationService();
-        bank.addAccount(new SavingsAccount("1001", "1234", 5000));
-        bank.addAccount(new CheckingAccount("1002", "4321", 3000));
+        bank.addAccount(new SavingsAccount("1001", "1234", 500));
+        bank.addAccount(new CheckingAccount("1002", "4321", 300));
+        bank.addAccount(new CheckingAccount("1003", "5432", 200));
     }
 
     public void start() {
