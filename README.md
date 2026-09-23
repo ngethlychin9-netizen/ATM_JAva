@@ -74,8 +74,9 @@ These accounts are included in the application for demonstration purposes:
 
 | Account number | PIN  | Account type | Starting balance |
 |---|---|---|---:|
-| `1001` | `1234` | Savings | 5000 |
-| `1002` | `4321` | Checking | 3000 |
+| `1001` | `1234` | Savings | 500 |
+| `1002` | `4321` | Checking | 300 |
+| `1003` | `5432` | Checking | 200 |
 
 The account number acts as the username. These credentials are for local demonstration only and should not be used in a production system.
 
@@ -100,7 +101,9 @@ Account changes are held in memory while the application is running.
 - Savings accounts cannot withdraw more than their available balance.
 - Checking accounts have a withdrawal limit of `1000` per transaction.
 - Transfers require a valid destination account and cannot be made to the same account.
-- An account is locked after three failed login attempts.
+- Wrong account numbers and PINs count as failed user login attempts.
+- After three failed user login attempts, the ATM displays a message and exits.
+- An account is locked after three incorrect PIN attempts for that account.
 
 ## Technologies
 
