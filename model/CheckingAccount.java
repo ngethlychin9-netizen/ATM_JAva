@@ -1,7 +1,6 @@
 package model;
 
 import exception.InsufficientFundsException;
-import model.Transaction;
 
 public class CheckingAccount extends Account {
 
