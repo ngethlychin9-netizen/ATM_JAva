@@ -113,6 +113,9 @@ public class ATM {
         frame.setSize(360, 300);
         frame.setLocationRelativeTo(null);
 
+        JLabel accountTypeLabel = new JLabel(
+            "Account type: " + getAccountType(currentAccount),
+            JLabel.CENTER);
         JPanel buttons = new JPanel(new GridLayout(0, 1, 8, 8));
         addButton(buttons, "Check balance", this::showBalance);
         addButton(buttons, "Deposit", this::deposit);
@@ -121,8 +124,13 @@ public class ATM {
         addButton(buttons, "Transaction history", this::showHistory);
         addButton(buttons, "Change PIN", this::changePin);
         addButton(buttons, "Logout", this::logout);
+        frame.add(accountTypeLabel, BorderLayout.NORTH);
         frame.add(buttons, BorderLayout.CENTER);
         frame.setVisible(true);
+    }
+
+    private String getAccountType(Account account) {
+        return account instanceof SavingsAccount ? "SAVINGS" : "CHECKING";
     }
 
     private void showAdminMenu() {
@@ -198,7 +206,7 @@ public class ATM {
                         .compareTo(second.getAccountNumber()))
                 .map(account -> String.format("%s | %s | Balance: $%.2f | %s",
                         account.getAccountNumber(),
-                        account instanceof SavingsAccount ? "Savings" : "Checking",
+                    getAccountType(account),
                         account.getBalance(),
                         account.isLocked() ? "Locked" : "Active"))
                 .collect(Collectors.joining("\n"));
