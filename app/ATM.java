@@ -23,11 +23,13 @@ public class ATM {
 
     private static final String ADMIN_USERNAME = "admin";
     private static final String ADMIN_PIN = "admin123";
+    private static final int MAX_LOGIN_ATTEMPTS = 3;
 
     private Bank bank;
     private AuthenticationService auth;
     private Account currentAccount;
     private JFrame frame;
+    private int failedUserLoginAttempts;
 
     public ATM() {
         bank = new Bank();
@@ -35,6 +37,7 @@ public class ATM {
         bank.addAccount(new SavingsAccount("1001", "1234", 500));
         bank.addAccount(new CheckingAccount("1002", "4321", 300));
         bank.addAccount(new CheckingAccount("1003", "5432", 200));
+        failedUserLoginAttempts = 0;
     }
 
     public void start() {
@@ -73,11 +76,20 @@ public class ATM {
         Account account = bank.findAccount(accountField.getText().trim());
         String pin = new String(pinField.getPassword());
         if (!auth.login(account, pin)) {
-            showError("Invalid account number or PIN.");
+            failedUserLoginAttempts++;
+            if (failedUserLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
+                JOptionPane.showMessageDialog(null,
+                        "Three failed login attempts. The ATM will now exit.",
+                        "Login blocked", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
+            showError("Invalid account number or PIN. Attempts remaining: "
+                    + (MAX_LOGIN_ATTEMPTS - failedUserLoginAttempts));
             showUserLogin();
             return;
         }
 
+        failedUserLoginAttempts = 0;
         currentAccount = account;
         showMenu();
     }
