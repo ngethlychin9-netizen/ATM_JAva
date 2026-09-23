@@ -141,13 +141,12 @@ public class ATM {
     }
 
     private void createAccount() {
-        JTextField accountField = new JTextField();
+        String accountNumber = generateNextAccountNumber();
         JPasswordField pinField = new JPasswordField();
         JTextField balanceField = new JTextField();
         String[] accountTypes = {"Savings", "Checking"};
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
-        panel.add(new JLabel("Account number:"));
-        panel.add(accountField);
+        panel.add(new JLabel("Generated account number: " + accountNumber));
         panel.add(new JLabel("PIN:"));
         panel.add(pinField);
         panel.add(new JLabel("Starting balance:"));
@@ -162,16 +161,11 @@ public class ATM {
             return;
         }
 
-        String accountNumber = accountField.getText().trim();
         String pin = new String(pinField.getPassword());
         try {
             double balance = parseNonNegativeAmount(balanceField.getText());
-            if (accountNumber.isEmpty() || pin.isEmpty()) {
-                throw new IllegalArgumentException("Account number and PIN are required.");
-            }
-            if (ADMIN_USERNAME.equalsIgnoreCase(accountNumber)
-                    || bank.findAccount(accountNumber) != null) {
-                throw new IllegalArgumentException("That account number is already in use.");
+            if (pin.isEmpty()) {
+                throw new IllegalArgumentException("PIN is required.");
             }
 
             Account account = "Savings".equals(typeField.getSelectedItem())
@@ -184,6 +178,18 @@ public class ATM {
         } catch (IllegalArgumentException exception) {
             showError(exception.getMessage());
         }
+    }
+
+    private String generateNextAccountNumber() {
+        int highestAccountNumber = 100;
+        for (String accountNumber : bank.getAccounts().keySet()) {
+            try {
+                highestAccountNumber = Math.max(highestAccountNumber,
+                        Integer.parseInt(accountNumber));
+            } catch (NumberFormatException exception) {
+            }
+        }
+        return String.valueOf(highestAccountNumber + 1);
     }
 
     private void showAllAccounts() {

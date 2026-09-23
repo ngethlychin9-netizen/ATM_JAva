@@ -88,7 +88,7 @@ Use the following demo credentials to open the administration menu:
 
 The admin can:
 
-1. Create new savings or checking accounts with a starting balance.
+1. Create new savings or checking accounts with a starting balance. Account numbers are generated automatically in sequence.
 2. View all accounts, balances, account types, and lock status.
 3. Lock or unlock a user account.
 
