@@ -21,6 +21,9 @@ import service.Bank;
 
 public class ATM {
 
+    private static final String ADMIN_USERNAME = "admin";
+    private static final String ADMIN_PIN = "admin123";
+
     private Bank bank;
     private AuthenticationService auth;
     private Account currentAccount;
@@ -38,6 +41,19 @@ public class ATM {
     }
 
     private void showLogin() {
+        String[] roles = {"User Login", "Admin Login", "Exit"};
+        int role = JOptionPane.showOptionDialog(null,
+                "Select how you want to sign in.", "ATM Login",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, roles, roles[0]);
+        if (role == 0) {
+            showUserLogin();
+        } else if (role == 1) {
+            showAdminLogin();
+        }
+    }
+
+    private void showUserLogin() {
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
         JTextField accountField = new JTextField();
         JPasswordField pinField = new JPasswordField();
@@ -46,9 +62,10 @@ public class ATM {
         panel.add(new JLabel("PIN:"));
         panel.add(pinField);
 
-        int result = JOptionPane.showConfirmDialog(null, panel, "ATM Login",
+        int result = JOptionPane.showConfirmDialog(null, panel, "User Login",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result != JOptionPane.OK_OPTION) {
+            showLogin();
             return;
         }
 
@@ -56,12 +73,38 @@ public class ATM {
         String pin = new String(pinField.getPassword());
         if (!auth.login(account, pin)) {
             showError("Invalid account number or PIN.");
-            showLogin();
+            showUserLogin();
             return;
         }
 
         currentAccount = account;
         showMenu();
+    }
+
+    private void showAdminLogin() {
+        JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
+        JTextField usernameField = new JTextField();
+        JPasswordField pinField = new JPasswordField();
+        panel.add(new JLabel("Admin username:"));
+        panel.add(usernameField);
+        panel.add(new JLabel("Admin PIN:"));
+        panel.add(pinField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Admin Login",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result != JOptionPane.OK_OPTION) {
+            showLogin();
+            return;
+        }
+
+        String username = usernameField.getText().trim();
+        String pin = new String(pinField.getPassword());
+        if (ADMIN_USERNAME.equals(username) && ADMIN_PIN.equals(pin)) {
+            showAdminMenu();
+        } else {
+            showError("Invalid admin username or PIN.");
+            showAdminLogin();
+        }
     }
 
     private void showMenu() {
@@ -80,6 +123,101 @@ public class ATM {
         addButton(buttons, "Logout", this::logout);
         frame.add(buttons, BorderLayout.CENTER);
         frame.setVisible(true);
+    }
+
+    private void showAdminMenu() {
+        frame = new JFrame("ATM Administration");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(360, 220);
+        frame.setLocationRelativeTo(null);
+
+        JPanel buttons = new JPanel(new GridLayout(0, 1, 8, 8));
+        addButton(buttons, "Create user account", this::createAccount);
+        addButton(buttons, "View all accounts", this::showAllAccounts);
+        addButton(buttons, "Lock or unlock account", this::toggleAccountLock);
+        addButton(buttons, "Admin logout", this::logout);
+        frame.add(buttons, BorderLayout.CENTER);
+        frame.setVisible(true);
+    }
+
+    private void createAccount() {
+        JTextField accountField = new JTextField();
+        JPasswordField pinField = new JPasswordField();
+        JTextField balanceField = new JTextField();
+        String[] accountTypes = {"Savings", "Checking"};
+        JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
+        panel.add(new JLabel("Account number:"));
+        panel.add(accountField);
+        panel.add(new JLabel("PIN:"));
+        panel.add(pinField);
+        panel.add(new JLabel("Starting balance:"));
+        panel.add(balanceField);
+        panel.add(new JLabel("Account type:"));
+        javax.swing.JComboBox<String> typeField = new javax.swing.JComboBox<>(accountTypes);
+        panel.add(typeField);
+
+        int result = JOptionPane.showConfirmDialog(frame, panel, "Create User Account",
+                JOptionPane.OK_CANCEL_OPTION);
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        String accountNumber = accountField.getText().trim();
+        String pin = new String(pinField.getPassword());
+        try {
+            double balance = parseNonNegativeAmount(balanceField.getText());
+            if (accountNumber.isEmpty() || pin.isEmpty()) {
+                throw new IllegalArgumentException("Account number and PIN are required.");
+            }
+            if (ADMIN_USERNAME.equalsIgnoreCase(accountNumber)
+                    || bank.findAccount(accountNumber) != null) {
+                throw new IllegalArgumentException("That account number is already in use.");
+            }
+
+            Account account = "Savings".equals(typeField.getSelectedItem())
+                    ? new SavingsAccount(accountNumber, pin, balance)
+                    : new CheckingAccount(accountNumber, pin, balance);
+            bank.addAccount(account);
+            showMessage("User account created successfully.");
+        } catch (NumberFormatException exception) {
+            showError("Starting balance must be a valid number.");
+        } catch (IllegalArgumentException exception) {
+            showError(exception.getMessage());
+        }
+    }
+
+    private void showAllAccounts() {
+        String accounts = bank.getAccounts().values().stream()
+                .sorted((first, second) -> first.getAccountNumber()
+                        .compareTo(second.getAccountNumber()))
+                .map(account -> String.format("%s | %s | Balance: $%.2f | %s",
+                        account.getAccountNumber(),
+                        account instanceof SavingsAccount ? "Savings" : "Checking",
+                        account.getBalance(),
+                        account.isLocked() ? "Locked" : "Active"))
+                .collect(Collectors.joining("\n"));
+        showMessage(accounts.isEmpty() ? "No user accounts found." : accounts);
+    }
+
+    private void toggleAccountLock() {
+        String accountNumber = JOptionPane.showInputDialog(frame,
+                "Enter the user account number:");
+        if (accountNumber == null) {
+            return;
+        }
+
+        Account account = bank.findAccount(accountNumber.trim());
+        if (account == null) {
+            showError("Account was not found.");
+            return;
+        }
+        if (account.isLocked()) {
+            account.unlockAccount();
+            showMessage("Account unlocked successfully.");
+        } else {
+            account.lockAccount();
+            showMessage("Account locked successfully.");
+        }
     }
 
     private void addButton(JPanel panel, String text, Runnable action) {
@@ -192,6 +330,14 @@ public class ATM {
         double amount = Double.parseDouble(input.trim());
         if (!Double.isFinite(amount) || amount <= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero.");
+        }
+        return amount;
+    }
+
+    private double parseNonNegativeAmount(String input) {
+        double amount = Double.parseDouble(input.trim());
+        if (!Double.isFinite(amount) || amount < 0) {
+            throw new IllegalArgumentException("Starting balance cannot be negative.");
         }
         return amount;
     }

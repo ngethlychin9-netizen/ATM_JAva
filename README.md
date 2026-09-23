@@ -14,6 +14,7 @@ A desktop ATM application built with Java and Swing. The project demonstrates ob
 - Logout
 - Account locking after three failed login attempts
 - Different withdrawal rules for savings and checking accounts
+- Admin account creation and account management
 
 ## Requirements
 
@@ -65,6 +66,8 @@ java -cp out app.Main
 
 Do not run `javac Main.java` from inside the `app` folder because the application uses Java packages and imports classes from the other folders.
 
+When the application starts, choose **User Login** to access a customer account or **Admin Login** to open the administration menu.
+
 ## Demo Login Accounts
 
 These accounts are included in the application for demonstration purposes:
@@ -75,6 +78,21 @@ These accounts are included in the application for demonstration purposes:
 | `1002` | `4321` | Checking | 3000 |
 
 The account number acts as the username. These credentials are for local demonstration only and should not be used in a production system.
+
+## Admin Login
+
+Use the following demo credentials to open the administration menu:
+
+- Username: `admin`
+- PIN: `admin123`
+
+The admin can:
+
+1. Create new savings or checking accounts with a starting balance.
+2. View all accounts, balances, account types, and lock status.
+3. Lock or unlock a user account.
+
+Account changes are held in memory while the application is running.
 
 ## Account Rules
 
